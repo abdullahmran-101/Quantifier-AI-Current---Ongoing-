@@ -1,5 +1,5 @@
 {
-  "name": "Quantifier AI",
+  "name": "Quantifier AI v2",
   "nodes": [
     {
       "parameters": {
@@ -18,7 +18,6 @@
             },
             {
               "fieldLabel": "Phone Number",
-              "fieldType": "number",
               "requiredField": true
             },
             {
@@ -45,26 +44,90 @@
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.6,
       "position": [
-        -208,
+        -640,
         0
       ],
-      "id": "50ea2c24-1995-4eca-a923-aaf556a5acbb",
-      "name": "AI Lead Qualification Form",
-      "webhookId": "8bad5943-dda3-40ce-abcc-d8efa07e3579"
+      "id": "cad74e71-a223-4473-a481-acc82c38ab85",
+      "name": "AI Lead Qualification Form"
     },
     {
       "parameters": {
-        "schemaType": "manual",
-        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"lead_status\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"HOT\",\n        \"WARM\",\n        \"COLD\"\n      ]\n    },\n    \"lead_score\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 100\n    },\n    \"purchase_intent\": {\n      \"type\": \"string\"\n    },\n    \"lead_quality\": {\n      \"type\": \"string\"\n    },\n    \"key_requirements\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"reason\": {\n      \"type\": \"string\"\n    },\n    \"recommended_action\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"lead_status\",\n    \"lead_score\",\n    \"purchase_intent\",\n    \"lead_quality\",\n    \"key_requirements\",\n    \"reason\",\n    \"recommended_action\"\n  ]\n}"
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list",
+          "cachedResultName": "Quantifier AI"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email",
+              "lookupValue": "={{ $('AI Lead Qualification Form').first().json.Email }}"
+            }
+          ]
+        },
+        "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-      "typeVersion": 1.3,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
       "position": [
-        176,
-        208
+        -420,
+        0
       ],
-      "id": "ade68682-6296-483e-9bf3-628e579e8b9c",
-      "name": "Structured Output Parser"
+      "id": "04788d56-08f2-449a-a5d3-ac4c985a24ac",
+      "name": "Check Duplicate",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4271163d-ea30-48d2-8ff1-c96d0fad5863",
+              "leftValue": "={{ $json.Email || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -200,
+        0
+      ],
+      "id": "4215b8ec-79b9-40e2-b787-1e444368e13a",
+      "name": "Is New Lead?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        200
+      ],
+      "id": "23bec168-b0a6-4f56-b6a8-aad5d939d14a",
+      "name": "Duplicate - Skipped"
     },
     {
       "parameters": {
@@ -79,22 +142,31 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        -144,
-        208
+        -40,
+        230
       ],
-      "id": "16b2d2f6-74f1-4475-8332-a669a3170ca0",
-      "name": "OpenAI Chat Model",
-      "credentials": {
-        "openAiApi": {
-          "id": "ph9SGXZi4IPq4AJU",
-          "name": "n8n free OpenAI API credits"
-        }
-      }
+      "id": "0b25719e-5195-4d1a-b1d8-d40efc83c240",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"lead_status\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"HOT\",\n        \"WARM\",\n        \"COLD\"\n      ]\n    },\n    \"lead_score\": {\n      \"type\": \"number\",\n      \"minimum\": 0,\n      \"maximum\": 100\n    },\n    \"purchase_intent\": {\n      \"type\": \"string\"\n    },\n    \"lead_quality\": {\n      \"type\": \"string\"\n    },\n    \"key_requirements\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"reason\": {\n      \"type\": \"string\"\n    },\n    \"recommended_action\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"lead_status\",\n    \"lead_score\",\n    \"purchase_intent\",\n    \"lead_quality\",\n    \"key_requirements\",\n    \"reason\",\n    \"recommended_action\"\n  ]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        180,
+        250
+      ],
+      "id": "99ff3bac-9e17-4b3c-9171-68589106453b",
+      "name": "Structured Output Parser"
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Analyze the following lead and qualify it according to the lead scoring rules.\n\nLEAD INFORMATION\n\nFull Name:\n{{ $json.Name }}\nEmail:\n{{ $json.Email }}\nPhone:\n{{ $json['Phone Number'] }}\nCompany:\n{{ $json['Company Name'] }}\nRequired Service:\n{{ $json['Required Service'] }}\nBudget:\n {{ $json.Budget }}PKR\n\nProject Requirements:\n{{ $json.Requirements }}\nEvaluate the lead based only on the information provided.",
+        "text": "=Analyze the following lead and qualify it according to the lead scoring rules.\n\nLEAD INFORMATION\n\nFull Name: {{ $('AI Lead Qualification Form').first().json.Name }}\nEmail: {{ $('AI Lead Qualification Form').first().json.Email }}\nPhone: {{ $('AI Lead Qualification Form').first().json['Phone Number'] }}\nCompany: {{ $('AI Lead Qualification Form').first().json['Company Name'] || 'Not provided' }}\nRequired Service: {{ $('AI Lead Qualification Form').first().json['Required Service'] }}\nBudget: {{ $('AI Lead Qualification Form').first().json.Budget ? $('AI Lead Qualification Form').first().json.Budget + ' PKR' : 'Not provided' }}\n\nProject Requirements:\n{{ $('AI Lead Qualification Form').first().json.Requirements }}\n\nEvaluate the lead based only on the information provided.",
         "hasOutputParser": true,
         "options": {
           "systemMessage": "You are an AI Lead Qualification and Scoring Assistant for a business.\n\nYour job is to analyze incoming lead information and determine:\n\n1. Lead status\n2. Lead score\n3. Purchase intent\n4. Lead quality\n5. Key requirements\n6. Reason for classification\n7. Recommended next action\n\nAnalyze the lead objectively using the provided information.\n\nLEAD CLASSIFICATION RULES\n\nHOT LEAD:\nClassify a lead as HOT when most of the following conditions are satisfied:\n- Company name is provided\n- Required service is clearly specified\n- Budget is 100,000 PKR or higher\n- Full name, email, and phone number are available\n- The lead shows strong purchase intent\n- The lead appears ready to start or purchase the service\n\nHOT lead score should generally be between 80 and 100.\n\nWARM LEAD:\nClassify a lead as WARM when:\n- Company name and required service are available\n- Budget is between 30,000 and 99,999 PKR\nOR\n- The lead has a flexible/negotiable budget\n- The lead shows moderate purchase intent\n- Some important information may still be missing\n\nWARM lead score should generally be between 50 and 79.\n\nCOLD LEAD:\nClassify a lead as COLD when:\n- Important information is missing\n- Required service is unclear\n- Budget is below 30,000 PKR\n- Purchase intent is weak or unclear\n- The lead appears to be only exploring or asking general questions\n- The lead does not provide enough information to qualify as HOT or WARM\n\nCOLD lead score should generally be between 0 and 49.\n\nIMPORTANT SCORING RULES\n\nDo not classify a lead as HOT only because the budget is high.\n\nConsider the complete lead:\n- Contact information\n- Company\n- Required service\n- Budget\n- Requirements\n- Purchase intent\n\nIf the lead has a high budget but weak or unclear intent, do not automatically classify it as HOT.\n\nIf budget is missing, use the other available information to determine the most appropriate classification.\n\nIf budget is written as text such as:\n\"150k\", \"150,000\", \"150K PKR\", or \"around 150000\"\n\ninterpret it as approximately 150,000 PKR.\n\nDo not invent missing information.\n\nDo not assume a company name, budget, service, or purchase intent that was not provided.\n\nRECOMMENDED ACTIONS\n\nHOT:\nRecommend immediate contact by the sales team.\n\nWARM:\nRecommend follow-up and further qualification.\n\nCOLD:\nRecommend keeping the lead in the database for future nurturing or requesting additional information.\n\nOUTPUT REQUIREMENTS\n\nReturn ONLY valid JSON.\n\nDo not return Markdown.\nDo not use ```json.\nDo not include explanations outside the JSON.\n\nThe output must exactly follow the provided structured output schema.\n\nAll array fields must contain strings only.\nThe lead_score must be a number between 0 and 100.\nThe lead_status must be exactly one of:\nHOT\nWARM\nCOLD"
@@ -103,47 +175,62 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        0,
+        20,
         0
       ],
-      "id": "e0731195-99bc-4cf4-83f5-e175f9ce57ec",
-      "name": "AI Lead Qualification"
+      "id": "40acfcf7-b3a4-4779-80be-2e76701aaf68",
+      "name": "AI Lead Qualification",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const o = $input.item.json.output;\nconst s = Math.max(0, Math.min(100, Number(o.lead_score) || 0));\no.lead_score = s;\no.lead_status = s >= 80 ? 'HOT' : s >= 50 ? 'WARM' : 'COLD';\nreturn { json: { output: o } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "id": "56c302d0-badd-40eb-a2a4-207a869f5a71",
+      "name": "Validate Score"
     },
     {
       "parameters": {
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "18jhjsrqOiBa9Eteh8eOJhE4CSJfZCiMhGTrQVAwu7Lc",
-          "mode": "list",
-          "cachedResultName": "30 DAYS -CHALLENGE",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18jhjsrqOiBa9Eteh8eOJhE4CSJfZCiMhGTrQVAwu7Lc/edit?usp=drivesdk"
+          "value": "",
+          "mode": "list"
         },
         "sheetName": {
           "__rl": true,
-          "value": 1918669829,
+          "value": "",
           "mode": "list",
-          "cachedResultName": "Quantifier AI",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18jhjsrqOiBa9Eteh8eOJhE4CSJfZCiMhGTrQVAwu7Lc/edit#gid=1918669829"
+          "cachedResultName": "Quantifier AI"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "Timestamp": "={{ $('AI Lead Qualification Form').item.json.submittedAt }}",
-            "Full Name": "={{ $('AI Lead Qualification Form').item.json.Name }}",
-            "Email": "={{ $('AI Lead Qualification Form').item.json.Email }}",
-            "Phone": "={{ $('AI Lead Qualification Form').item.json['Phone Number'] }}",
-            "Company": "={{ $('AI Lead Qualification Form').item.json['Company Name'] }}",
-            "Required Service": "={{ $('AI Lead Qualification Form').item.json['Required Service'] }}",
-            "Budget": "={{ $('AI Lead Qualification Form').item.json.Budget }}",
-            "Requirements": "={{ $('AI Lead Qualification Form').item.json.Requirements }}",
+            "Timestamp": "={{ $('AI Lead Qualification Form').first().json.submittedAt }}",
+            "Full Name": "={{ $('AI Lead Qualification Form').first().json.Name }}",
+            "Email": "={{ $('AI Lead Qualification Form').first().json.Email }}",
+            "Phone": "={{ $('AI Lead Qualification Form').first().json['Phone Number'] }}",
+            "Company": "={{ $('AI Lead Qualification Form').first().json['Company Name'] }}",
+            "Required Service": "={{ $('AI Lead Qualification Form').first().json['Required Service'] }}",
+            "Budget": "={{ $('AI Lead Qualification Form').first().json.Budget }}",
+            "Requirements": "={{ $('AI Lead Qualification Form').first().json.Requirements }}",
             "Lead Status": "={{ $json.output.lead_status }}",
             "Lead Score": "={{ $json.output.lead_score }}",
             "Purchase Intent": "={{ $json.output.purchase_intent }}",
             "Lead Quality": "={{ $json.output.lead_quality }}",
-            "Key Requirements": "={{ $json.output.key_requirements.join(',') }}",
+            "Key Requirements": "={{ $json.output.key_requirements.join(', ') }}",
             "Reason": "={{ $json.output.reason }}",
-            "Recommended Action": "={{ $json.output.recommended_action }}"
+            "Recommended Action": "={{ $json.output.recommended_action }}",
+            "Pipeline Status": "New"
           },
           "matchingColumns": [],
           "schema": [
@@ -281,6 +368,15 @@
               "display": true,
               "type": "string",
               "canBeUsedToMatch": true
+            },
+            {
+              "id": "Pipeline Status",
+              "displayName": "Pipeline Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -291,17 +387,11 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        352,
+        460,
         0
       ],
-      "id": "19f2cceb-a9f4-45e5-929d-fecfb5649141",
-      "name": "RECORD",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "PJ7xpgsnyi0di1RR",
-          "name": "Google Sheets account"
-        }
-      }
+      "id": "3b0d6352-6e6f-41a7-aea0-0f4b37c8cb22",
+      "name": "RECORD"
     },
     {
       "parameters": {
@@ -317,13 +407,13 @@
                 },
                 "conditions": [
                   {
+                    "id": "901aedb9-294b-4a04-aaf4-da6541aae568",
                     "leftValue": "={{ $json['Lead Status'] }}",
                     "rightValue": "HOT",
                     "operator": {
                       "type": "string",
                       "operation": "equals"
-                    },
-                    "id": "2fd205de-da0d-4385-bc27-cc169c9c77fe"
+                    }
                   }
                 ],
                 "combinator": "and"
@@ -339,7 +429,7 @@
                 },
                 "conditions": [
                   {
-                    "id": "5923454f-4c3c-4006-ba17-27b5a6d883d9",
+                    "id": "765b1969-a7d3-4f65-85cf-8c85088eaa2c",
                     "leftValue": "={{ $json['Lead Status'] }}",
                     "rightValue": "WARM",
                     "operator": {
@@ -361,7 +451,7 @@
                 },
                 "conditions": [
                   {
-                    "id": "26157d07-0e2f-49e7-a1c8-d74bb9917340",
+                    "id": "d9c542ee-6dab-45fb-9647-7d1fc228e730",
                     "leftValue": "={{ $json['Lead Status'] }}",
                     "rightValue": "COLD",
                     "operator": {
@@ -380,17 +470,18 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        560,
+        660,
         0
       ],
-      "id": "df009cd0-5c2c-4545-891a-5ef0f22f97ef",
+      "id": "d57cea47-e7e9-462c-895d-650282756e6f",
       "name": "Switch"
     },
     {
       "parameters": {
-        "sendTo": "={{ $('RECORD').item.json.Email }}",
-        "subject": "=🔥 HOT LEAD ALERT — {{ $('RECORD').item.json['Lead Score'] }}% Score",
-        "message": "=Hello Sales Team,\nA new HOT lead has been identified by the Quantifier AI. \n━━━━━━━━━━━━━━━━━━━━  \nLEAD DETAILS  Name {{ $('RECORD').item.json['Full Name'] }}\nEmail: {{ $('RECORD').item.json.Email }}\nCompany: {{ $('RECORD').item.json.Company }}\nRequired Service: {{ $('RECORD').item.json['Required Service'] }}  \nBudget: {{ $('RECORD').item.json.Budget }} PKR \n━━━━━━━━━━━━━━━━━━━━ \nAI QUALIFICATION  Lead Status: {{ $('RECORD').item.json['Lead Status'] }}\nLead Score: {{ $('RECORD').item.json['Lead Score'] }}\nPurchase Intent: {{ $('RECORD').item.json['Purchase Intent'] }}\nLead Quality: {{ $('RECORD').item.json['Lead Quality'] }}\nKey Requirements: {{ $('RECORD').item.json['Key Requirements'] }} \nReason: {{ $('RECORD').item.json.Reason }} \nRecommended Action: {{ $('RECORD').item.json['Recommended Action'] }}\n━━━━━━━━━━━━━━━━━━━━  \nACTION REQUIRED  Please contact this lead as soon as possible.  Regards, \nQuantifier AI",
+        "sendTo": "YOUR_SALES_EMAIL@example.com",
+        "subject": "=🔥 HOT LEAD ALERT — {{ $json['Lead Score'] }}/100 — {{ $json['Full Name'] }}",
+        "emailType": "text",
+        "message": "=Hello Sales Team,\n\nA new HOT lead has been identified by Quantifier AI.\n\n--------------------\nLEAD DETAILS\nName: {{ $json['Full Name'] }}\nEmail: {{ $json.Email }}\nPhone: {{ $json.Phone }}\nCompany: {{ $json.Company }}\nRequired Service: {{ $json['Required Service'] }}\nBudget: {{ $json.Budget }} PKR\n\n--------------------\nAI QUALIFICATION\nLead Score: {{ $json['Lead Score'] }}/100\nPurchase Intent: {{ $json['Purchase Intent'] }}\nLead Quality: {{ $json['Lead Quality'] }}\nKey Requirements: {{ $json['Key Requirements'] }}\nReason: {{ $json.Reason }}\nRecommended Action: {{ $json['Recommended Action'] }}\n\n--------------------\nACTION REQUIRED: Please contact this lead as soon as possible.\n\nRegards,\nQuantifier AI",
         "options": {
           "appendAttribution": false
         }
@@ -398,24 +489,35 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        768,
-        -112
+        900,
+        -220
       ],
-      "id": "13e16e49-64a5-4bc4-b0a8-718439eff0a4",
-      "name": "HOT LEAD",
-      "webhookId": "725567df-693d-4699-a63f-4e4ccd1fcf2d",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "zks4zsngEiR8n9Ci",
-          "name": "Gmail account"
-        }
-      }
+      "id": "c064a350-e543-492a-bda6-11aeb6d22d96",
+      "name": "HOT - Sales Alert Email"
     },
     {
       "parameters": {
-        "sendTo": "={{ $('RECORD').item.json.Email }}",
-        "subject": "Following Up on Your Project Inquiry",
-        "message": "=Hi {{ $('RECORD').item.json['Full Name'] }},  Thank you for sharing your project requirements with us.  We reviewed your inquiry and would be happy to learn more about your requirements and discuss how we can help.  Our team will get in touch with you to discuss the project, requirements, and available options.  Best regards, Sales Team",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=🔥 HOT LEAD — {{ $json['Lead Score'] }}/100\n\n{{ $json['Full Name'] }} ({{ $json.Company }})\nService: {{ $json['Required Service'] }}\nBudget: {{ $json.Budget }} PKR\nPhone: {{ $json.Phone }}\nEmail: {{ $json.Email }}\n\nNext: {{ $json['Recommended Action'] }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        900,
+        -80
+      ],
+      "id": "3ffb1164-2adf-4145-b5c0-f7dfb534ff96",
+      "name": "HOT - Telegram Alert"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "We received your inquiry",
+        "emailType": "text",
+        "message": "=Hi {{ $json['Full Name'] }},\n\nThank you for reaching out. Your project looks like a great fit and a member of our team will contact you shortly.\n\nBest regards,\nSales Team",
         "options": {
           "appendAttribution": false
         }
@@ -423,18 +525,79 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        784,
-        80
+        900,
+        60
       ],
-      "id": "30114d73-d5a3-4dba-a26e-c93a4d15d89a",
-      "name": "WARM",
-      "webhookId": "d15ce43c-6511-4d29-ab3d-8dd5a59d9e3d",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "zks4zsngEiR8n9Ci",
-          "name": "Gmail account"
+      "id": "3ddec231-f3cf-40f3-882a-6679daba916f",
+      "name": "HOT - Confirm to Lead"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Following Up on Your Project Inquiry",
+        "emailType": "text",
+        "message": "=Hi {{ $json['Full Name'] }},\n\nThank you for sharing your project requirements with us.\n\nWe would be happy to learn more and discuss how we can help. You can book a short call at a time that suits you:\nhttps://calendly.com/YOUR_CALENDLY_LINK\n\nOr reply to this email and our team will get in touch.\n\nBest regards,\nSales Team",
+        "options": {
+          "appendAttribution": false
         }
-      }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        200
+      ],
+      "id": "256de286-7ee2-4b28-90e8-6c59bf04ca45",
+      "name": "WARM - Follow-Up"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Thanks for your interest — a few quick questions",
+        "emailType": "text",
+        "message": "=Hi {{ $json['Full Name'] }},\n\nThank you for your interest in our services.\n\nTo point you in the right direction, could you reply with a few more details?\n- What problem are you trying to solve?\n- Which service are you interested in?\n- Roughly what budget and timeline do you have in mind?\n\nOnce we hear back, we'll follow up with options.\n\nBest regards,\nSales Team",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        340
+      ],
+      "id": "a652e412-ffe0-4986-a450-b57f558bba28",
+      "name": "COLD - Request More Info"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        440
+      ],
+      "id": "fbc64b56-aea0-435c-81df-42e8d9a9173d",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_ADMIN_EMAIL@example.com",
+        "subject": "⚠️ Quantifier AI workflow failed",
+        "emailType": "text",
+        "message": "=Workflow: {{ $json.workflow.name }}\nFailed node: {{ $json.execution.lastNodeExecuted }}\nError: {{ $json.execution.error.message }}\nExecution: {{ $json.execution.url }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -420,
+        440
+      ],
+      "id": "c759b594-6d6d-4da4-b5b7-58dce609852d",
+      "name": "Error Alert"
     }
   ],
   "pinData": {},
@@ -443,8 +606,53 @@
       "main": [
         [
           {
+            "node": "Check Duplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Duplicate": {
+      "main": [
+        [
+          {
+            "node": "Is New Lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is New Lead?": {
+      "main": [
+        [
+          {
             "node": "AI Lead Qualification",
             "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Duplicate - Skipped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Lead Qualification",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -461,18 +669,18 @@
         ]
       ]
     },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
+    "AI Lead Qualification": {
+      "main": [
         [
           {
-            "node": "AI Lead Qualification",
-            "type": "ai_languageModel",
+            "node": "Validate Score",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "AI Lead Qualification": {
+    "Validate Score": {
       "main": [
         [
           {
@@ -498,14 +706,42 @@
       "main": [
         [
           {
-            "node": "HOT LEAD",
+            "node": "HOT - Sales Alert Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HOT - Telegram Alert",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HOT - Confirm to Lead",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "WARM",
+            "node": "WARM - Follow-Up",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "COLD - Request More Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Error Alert",
             "type": "main",
             "index": 0
           }
@@ -513,17 +749,9 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
-    "executionOrder": "v1",
-    "binaryMode": "separate"
+    "executionOrder": "v1"
   },
-  "versionId": "7f12a166-a7c1-4ca1-a0b2-8c2ed064f974",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "33d8510a8f6c0705b24da1b4eb98d9cf10d7f638be14770e2af068c96a52da4a"
-  },
-  "nodeGroups": [],
-  "id": "O8ufgrttonLCgN2x",
   "tags": []
 }
